@@ -1,0 +1,26 @@
+Вам необхідно написати наступні запити до вашої створеної колекції
+
+Знайти користувачів у яких в імені є послідовність букв qw
+1.db.UserProfile.find({ name: { $regex: /qw/ } })
+
+Знайти користувачів у яких country дорівнює Ukraine
+2.db.UserProfile.find({ country:"Ukraine" }) або db.UserProfile.find({ country:"Ukraine" }).count()
+
+Знайти користувачів у яких в профайлі поле country не має значення
+3.db.UserProfile.find({ country:{$eq:""} }) або db.UserProfile.find({ country:"" }).count()
+
+Знайти користувачів у яких в профайлі поле name не починається з літери a обовязково використовувати $where
+4.db.UserProfile.find({$where: function () { return !/^a/.test(this.name); } }).count()
+
+Робота з $lookup
+Додайте колекцію car, так як це описано в схемі.
+Додайте 10 автівок.
+
+
+Напишіть запит який буде повертати інформацію по машинам та їх власників у яких mileage буде більше або дорівнювати 100 и модель атомобіля ауді
+5. db.Cars.aggregate([{$lookup:{ from:"UserProfile", localField:"userId", foreignField:"userId",as :"user_info"}}, {$lookup:{ from:"CarBrands", localField:"carBrandId", foreignField:"id",as :"cars_info"}}, {$match:{mileage:{$gte:100}}} ])
+
+запрос работает корректно, просто у меня были залиты все данные в Cars где mileage 100 и больше, но я потом проверил с параметром $lte
+
+Знайти cars у яких бранд BMW або Audi
+6.db.Cars.aggregate([{$lookup:{ from:"CarBrands", localField:"carBrandId", foreignField:"id",as :"cars_info"}}, {$match:{"cars_info.title":{$in:["Audi", "Bmw"]}}} ])
